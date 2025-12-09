@@ -66,8 +66,11 @@ byte keep_pulse                               = 0;
 
 void setup() {
   analogReference(AR_EXTERNAL);
-//   ADCSRA &= ~(bit (ADPS0) | bit (ADPS1) | bit (ADPS2));  // clear prescaler bits
-//   ADCSRA |= bit (ADPS0) | bit (ADPS1);                   // Set prescaler to 8
+  // Initialize the ADC
+  // ADC->CTRLA.reg |= ADC_CTRLA_ENABLE; // Enable the ADC
+
+   // Set prescaler to 8 example (can be adjusted)
+  // ADC->CTRLB.bit.PRESCALER = ADC_CTRLB_PRESCALER_DIV8_Val;
   Serial.begin(9600);
   
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);                               
@@ -116,6 +119,7 @@ void setup() {
 void loop()
 {
   while (1){
+    Serial.println(analogRead(A0));
     if (analogRead(A0) > SIGNAL_THRESHOLD){ 
 
       // Make a measurement of the pulse amplitude
