@@ -1,6 +1,6 @@
 
 
-int counts[12] = {20, 30, 40, 50, 60, 70, 0, 0, 0, 0, 0, 0};
+int counts[12] = {30, 40, 50, 60, 70, 80, 0, 0, 0, 0, 0, 0};
 
 float startTime;
 
@@ -17,6 +17,7 @@ void setup() {
   ADC->CTRLA.reg |= ADC_CTRLA_ENABLE; // Enable the AD
   // while (ADC->STATUS.bit.SYNCBUSY) {}
   // analogReference(AR_INTERNAL1V65);
+  delay(2000);
   startTime = millis();
 }
 
@@ -29,8 +30,9 @@ void loop() {
       break;
     }
   }
+  if (mV <= counts[0]) return;
   Serial.println("**********************************");
-  Serial.println("Total time: " + (String)currentTime);
+  Serial.println("TOTAL TIME: " + (String)currentTime);
   Serial.print("Thresh ");
   for (size_t i = 0; i < 6; i++) {
     Serial.print((String)counts[i] + " ");
@@ -46,6 +48,11 @@ void loop() {
     Serial.print((String)(counts[i] / currentTime) + " ");
   }
   Serial.println();
+  Serial.println("Recorded " + (String)mV);
+  while(mV > counts[0]) {
+    mV = (analogRead(A0) - 400) * 1.2 / 4096.0 * 3300;
+    Serial.println("Current millivolts: " + (String) mV + ", waiting to get below " + (String)counts[0]);
+  }
   // if (mV > 200)
     // Serial.println(mV);
   // Serial.println();
@@ -53,3 +60,14 @@ void loop() {
 
 
 }
+
+// Use this later for a polynomial fit to calibration data
+// float get_sipm_voltage(float adc_value)
+// {
+// int N = sizeof(cal)/sizeof(float);
+// float v = cal[0];
+// for (int i = 1; i < N; ++i) {
+// v = v * adc_value + cal[i];
+// }
+// return v;
+// }
